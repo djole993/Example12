@@ -5,7 +5,7 @@
 
     <!-- Declares a button that starts 2nd activity -->
     <Button
-        android:id="@+id/btnStart"
+        android:id="@+id/btnS_start_second_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start Activity"
@@ -13,7 +13,7 @@
 
     <!-- Declares a button that opens a browser -->
     <Button
-        android:id="@+id/btnSelectContact"
+        android:id="@+id/btn_select_contact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Contact"
