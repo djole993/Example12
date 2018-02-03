@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Toast;
 
@@ -12,14 +13,31 @@ import rs.aleph.android.example12.R;
 // Each activity extends Activity class
 public class FirstActivity extends Activity {
 
+	static final int PICK_CONTACT_REQUEST = 0;  // The request code
+
+	// The activity's state
+	private int a;
+	private float b;
+	private String c;
+	private int[] d = {0, 1, 2, 3, 4};
+
 	// onCreate method is a lifecycle method called when he activity is starting
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 	{
 
 		// Each lifecycle method should call the method it overrides
 		super.onCreate(savedInstanceState);
+
 		// setContentView method draws UI
 		setContentView(R.layout.activity_main);
+
+		// Load instance state from bundle
+		if (savedInstanceState != null) {
+			this.a = savedInstanceState.getInt("a");
+			this.b = savedInstanceState.getFloat("b");
+			this.c = savedInstanceState.getString("c");
+			this.d = savedInstanceState.getIntArray("d");
+		}
 
 		// Shows a toast message (a pop-up message)
 		Toast toast = Toast.makeText(getBaseContext(), "FirstActivity.onCreate()", Toast.LENGTH_SHORT);
@@ -96,6 +114,21 @@ public class FirstActivity extends Activity {
 		toast.show();
 	}
 
+	// onSaveInstanceState method is a life-cycle method that is called to ask the fragment to save its current dynamic state, so it can later be reconstructed in a new instance of its process is restarted.
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+
+		super.onSaveInstanceState(savedInstanceState);
+
+		// Shows a toast message (a pop-up message)
+		Toast.makeText(this, "FirstActivity.onSaveInstanceState()", Toast.LENGTH_SHORT).show();
+
+		savedInstanceState.putInt("a", a);
+		savedInstanceState.putFloat("b", b);
+		savedInstanceState.putString("c", c);
+		savedInstanceState.putIntArray("d", d);
+	}
+
 	// Called when btnStart button is clicked
 	public void btnStartActivityClicked(View view) {
 		// This is an explicit intent (class property is specified)
@@ -104,11 +137,29 @@ public class FirstActivity extends Activity {
         startActivity(intent);
 	}
 
-	// Called when btnOpen is clicked
-    public void btnOpenBrowserClicked(View view) {
+	// Called when btnSelectContact button is clicked
+    public void btnSelectContactClicked(View view) {
 		// This is an implicit intent
-        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://developer.android.com"));
+        Intent intent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
+		// Show user only contacts w/ phone numbers
+		intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
 		// startActivity method starts an activity
-		startActivity(i);
+		startActivityForResult(intent, PICK_CONTACT_REQUEST);
     }
+
+    // Called when an activity you launched exits, giving you the requestCode you started it with, the resultCode it returned, and any additional data from it.
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// Check which request it is that we're responding to
+		if (requestCode == PICK_CONTACT_REQUEST) {
+			// Make sure the request was successful
+			if (resultCode == RESULT_OK) {
+				// Get the URI that points to the selected contact
+				Uri contactUri = data.getData();
+
+                // Shows contact URI
+                Toast.makeText(this, "Contact URI: " + contactUri, Toast.LENGTH_SHORT).show();
+            }
+		}
+	}
 }
