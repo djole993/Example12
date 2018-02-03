@@ -5,7 +5,7 @@
 
     <!-- Declares a button that starts 2nd activity -->
     <Button
-        android:id="@+id/btnS_start_second_activity"
+        android:id="@+id/btn_start_second_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start Activity"
