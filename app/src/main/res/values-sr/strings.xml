@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Resursi &amp; Konfiguracije</string>
+    <string name="first_activity_name">Prva aktivnost</string>
+    <string name="second_activity_name">Druga aktivnost</string>
+</resources>

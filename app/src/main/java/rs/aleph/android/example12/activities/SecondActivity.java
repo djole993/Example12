@@ -4,14 +4,55 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import rs.aleph.android.example12.R;
+import rs.aleph.android.example12.activities.model.Jelo;
+import rs.aleph.android.example12.activities.model.Kategorija;
+import rs.aleph.android.example12.activities.model.Sastojak;
 
 // Each activity extends Activity class
 public class SecondActivity extends Activity {
 
+    private int position = 0;
+
+    Jelo cevapi = new Jelo("cevapi.jpg", "Cevapi", "Mleveno meso na rostilju", null, null, 300, 640);
+    Jelo omlet = new Jelo("omlet.jpg", "Omlet", "Jaja sa slaninom", null, null, 240, 300);
+    Jelo pica = new Jelo("pica.jbg", "Pica", "Testo sa sunkom, kecapom, kackavaljem", null, null, 320, 500);
+
+
     // onCreate method is a lifecycle method called when he activity is starting
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Kategorija k1 = new Kategorija(0, "Rostilj", cevapi);
+        Kategorija k2 = new Kategorija(1, "Omlet", omlet);
+        Kategorija k3 = new Kategorija(2, "Pice", pica);
+
+        Sastojak s1 = new Sastojak(0, "Mleveno meso", cevapi);
+        Sastojak s2 = new Sastojak(1, "Luka", cevapi);
+        Sastojak s3 = new Sastojak(2, "Jaja", omlet);
+        Sastojak s4 = new Sastojak(3, "Slanina", omlet);
+        Sastojak s5 = new Sastojak(4, "Testo", pica);
+        Sastojak s6 = new Sastojak(5, "Sunka", pica);
+
+        ArrayList<Sastojak>sastojciZaCevape = new ArrayList<>();
+        ArrayList<Sastojak>sastojciZaOmlet = new ArrayList<>();
+        ArrayList<Sastojak>sastojciZaPicu = new ArrayList<>();
+
+        sastojciZaCevape.add(s1);
+        sastojciZaCevape.add(s2);
+        sastojciZaOmlet.add(s3);
+        sastojciZaOmlet.add(s4);
+        sastojciZaPicu.add(s5);
+        sastojciZaPicu.add(s6);
+
+        cevapi.getSastojci(sastojciZaCevape);
+        omlet.getSastojci(sastojciZaOmlet);
+        pica.getSastojci(sastojciZaPicu);
+
+        cevapi.getKategorija(k1);
+        omlet.getKategorija(k2);
+        pica.getKategorija(k3);
 
         // Each lifecycle method should call the method it overrides
         super.onCreate(savedInstanceState);
