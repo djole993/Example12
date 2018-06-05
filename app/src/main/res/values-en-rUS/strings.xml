@@ -3,4 +3,8 @@
     <string name="app_name">Resources &amp; Configurations</string>
     <string name="first_activity_name">First Activity</string>
     <string name="second_activity_name">Second Activity</string>
+    <string name="button_buy">Buy</string>
+    <string name="button_cevape">Show Cevape</string>
+    <string name="button_omlet">Show Omlet</string>
+    <string name="button_pica">Show Pica</string>
 </resources>

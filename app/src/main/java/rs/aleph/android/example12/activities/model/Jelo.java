@@ -93,4 +93,8 @@ public class Jelo {
                 ", cena=" + cena +
                 '}';
     }
+
+    public Kategorija getKategorija() {
+        return kategorija;
+    }
 }

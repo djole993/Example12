@@ -3,4 +3,8 @@
     <string name="app_name">Resources &amp; Configurations</string>
     <string name="first_activity_name">First Activity</string>
     <string name="second_activity_name">Second Activity</string>
+    <string name="button_buy">Buy</string>
+    <string name="button_apples">Show Apples</string>
+    <string name="button_bananas">Show Bananas</string>
+    <string name="button_oranges">Show Oranges</string>
 </resources>

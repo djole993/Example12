@@ -6,9 +6,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import rs.aleph.android.example12.R;
+import rs.aleph.android.example12.activities.provider.JeloProvider;
 
 // Each activity extends Activity class
 public class FirstActivity extends Activity {
@@ -16,10 +22,6 @@ public class FirstActivity extends Activity {
 	static final int PICK_CONTACT_REQUEST = 0;  // The request code
 
 	// The activity's state
-	private int a;
-	private float b;
-	private String c;
-	private int[] d = {0, 1, 2, 3, 4};
 
 	// onCreate method is a lifecycle method called when he activity is starting
 	@Override
@@ -32,16 +34,29 @@ public class FirstActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		// Load instance state from bundle
-		if (savedInstanceState != null) {
-			this.a = savedInstanceState.getInt("a");
-			this.b = savedInstanceState.getFloat("b");
-			this.c = savedInstanceState.getString("c");
-			this.d = savedInstanceState.getIntArray("d");
-		}
+
 
 		// Shows a toast message (a pop-up message)
 		Toast toast = Toast.makeText(getBaseContext(), "FirstActivity.onCreate()", Toast.LENGTH_SHORT);
 		toast.show();
+
+		final List<String> jeloNazivi = JeloProvider.getJeloNaziv();
+
+		// Creates an ArrayAdaptar from the array of String
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.list_item, jeloNazivi);
+		ListView listView = (ListView) findViewById(R.id.listOfJela);
+
+		// Assigns ArrayAdaptar to ListView
+		listView.setAdapter(dataAdapter);
+
+		// Starts the SecondActivity and sends it the selected URL as an extra data
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
+				intent.putExtra("position", position);
+				startActivity(intent);
+			}
+		});
 	}
 
 	// onStart method is a lifecycle method called after onCreate (or after onRestart when the
@@ -122,12 +137,7 @@ public class FirstActivity extends Activity {
 
 		// Shows a toast message (a pop-up message)
 		Toast.makeText(this, "FirstActivity.onSaveInstanceState()", Toast.LENGTH_SHORT).show();
-
-		savedInstanceState.putInt("a", a);
-		savedInstanceState.putFloat("b", b);
-		savedInstanceState.putString("c", c);
-		savedInstanceState.putIntArray("d", d);
-	}
+		}
 
 	// Called when btnStart button is clicked
 	public void btnStartActivityClicked(View view) {
@@ -162,4 +172,23 @@ public class FirstActivity extends Activity {
             }
 		}
 	}
+	public void showCevape(View view) {
+
+		Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
+		intent.putExtra("position", 0);
+		startActivity(intent);
+	}
+	public void showOmlet(View view){
+		Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
+		intent.putExtra("position",1);
+		startActivity(intent);
+	}
+	public void showPica(View view) {
+
+		Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
+		intent.putExtra("position", 2);
+		startActivity(intent);
+	}
+
+
 }

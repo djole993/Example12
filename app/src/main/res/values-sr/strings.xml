@@ -3,4 +3,8 @@
     <string name="app_name">Resursi &amp; Konfiguracije</string>
     <string name="first_activity_name">Prva aktivnost</string>
     <string name="second_activity_name">Druga aktivnost</string>
+    <string name="button_buy">Kupi</string>
+    <string name="button_cevapi">Prikaži cevape</string>
+    <string name="button_omlet">Prikaži omlet</string>
+    <string name="button_pica">Prikaži picu</string>
 </resources>

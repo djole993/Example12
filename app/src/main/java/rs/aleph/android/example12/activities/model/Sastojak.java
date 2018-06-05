@@ -8,6 +8,10 @@ public class Sastojak {
     Sastojak(){
 
     }
+    public Sastojak(int id, String naziv){
+        this.id = id;
+        this.naziv = naziv;
+    }
 
     public Sastojak(int id, String naziv, Jelo jelo) {
         this.id = id;

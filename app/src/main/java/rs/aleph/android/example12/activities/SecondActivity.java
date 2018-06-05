@@ -1,60 +1,52 @@
 package rs.aleph.android.example12.activities;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import rs.aleph.android.example12.R;
 import rs.aleph.android.example12.activities.model.Jelo;
 import rs.aleph.android.example12.activities.model.Kategorija;
 import rs.aleph.android.example12.activities.model.Sastojak;
+import rs.aleph.android.example12.activities.provider.JeloProvider;
+import rs.aleph.android.example12.activities.provider.KategorijaProvider;
+import rs.aleph.android.example12.activities.provider.SastojakProvider;
 
 // Each activity extends Activity class
 public class SecondActivity extends Activity {
+    public interface OnItemSelectedListener{
+
+        void onItemSelected(int position);
+    }
+
+    OnItemSelectedListener listener;
 
     private int position = 0;
 
-    Jelo cevapi = new Jelo("cevapi.jpg", "Cevapi", "Mleveno meso na rostilju", null, null, 300, 640);
-    Jelo omlet = new Jelo("omlet.jpg", "Omlet", "Jaja sa slaninom", null, null, 240, 300);
-    Jelo pica = new Jelo("pica.jbg", "Pica", "Testo sa sunkom, kecapom, kackavaljem", null, null, 320, 500);
-
+    private ArrayList<Jelo>jela = new ArrayList<>();{
+             new Jelo("cevapi.jpg", "Cevapi", "Mleveno meso na rostilju", null, null, 300, 640);
+             new Jelo("omlet.jpg", "Omlet", "Jaja sa slaninom", null, null, 240, 300);
+             new Jelo("pica.jbg", "Pica", "Testo sa sunkom, kecapom, kackavaljem", null, null, 320, 500);
+}
 
     // onCreate method is a lifecycle method called when he activity is starting
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Kategorija k1 = new Kategorija(0, "Rostilj", cevapi);
-        Kategorija k2 = new Kategorija(1, "Omlet", omlet);
-        Kategorija k3 = new Kategorija(2, "Pice", pica);
 
-        Sastojak s1 = new Sastojak(0, "Mleveno meso", cevapi);
-        Sastojak s2 = new Sastojak(1, "Luka", cevapi);
-        Sastojak s3 = new Sastojak(2, "Jaja", omlet);
-        Sastojak s4 = new Sastojak(3, "Slanina", omlet);
-        Sastojak s5 = new Sastojak(4, "Testo", pica);
-        Sastojak s6 = new Sastojak(5, "Sunka", pica);
-
-        ArrayList<Sastojak>sastojciZaCevape = new ArrayList<>();
-        ArrayList<Sastojak>sastojciZaOmlet = new ArrayList<>();
-        ArrayList<Sastojak>sastojciZaPicu = new ArrayList<>();
-
-        sastojciZaCevape.add(s1);
-        sastojciZaCevape.add(s2);
-        sastojciZaOmlet.add(s3);
-        sastojciZaOmlet.add(s4);
-        sastojciZaPicu.add(s5);
-        sastojciZaPicu.add(s6);
-
-        cevapi.getSastojci(sastojciZaCevape);
-        omlet.getSastojci(sastojciZaOmlet);
-        pica.getSastojci(sastojciZaPicu);
-
-        cevapi.getKategorija(k1);
-        omlet.getKategorija(k2);
-        pica.getKategorija(k3);
-
-        // Each lifecycle method should call the method it overrides
         super.onCreate(savedInstanceState);
         // setContentView method draws UI
         setContentView(R.layout.activity_second);
@@ -62,6 +54,54 @@ public class SecondActivity extends Activity {
         // Shows a toast message (a pop-up message)
         Toast toast = Toast.makeText(getBaseContext(), "SecondActivity.onCreate()", Toast.LENGTH_SHORT);
         toast.show();
+
+
+
+        final int position = getIntent().getIntExtra("position", 0);
+
+        ImageView ivSlika = (ImageView) findViewById(R.id.iv_image);
+        InputStream is = null;
+        try {
+            is = getAssets().open(JeloProvider.getJeloById(position).getSlika());
+            Drawable drawable = Drawable.createFromStream(is, null);
+            ivSlika.setImageDrawable(drawable);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        TextView tvName = (TextView) findViewById(R.id.tv_name);
+        tvName.setText(JeloProvider.getJeloById(position).getNaziv());
+
+        TextView tvOpis = (TextView) findViewById(R.id.tv_discription);
+        tvOpis.setText(JeloProvider.getJeloById(position).getOpis());
+
+        Spinner spKategorija = (Spinner)findViewById(R.id.sp_category);
+        List<String> categories = KategorijaProvider.getKategorijaNaziv();
+        ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, categories);
+        spKategorija.setAdapter(adapter);
+        spKategorija.setSelection((int)JeloProvider.getJeloById(position).getKategorija().getId());
+
+        final List<String> fruitNames = SastojakProvider.getSastojakNaziv();
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.list_item, fruitNames);
+        ListView lvSastojci = (ListView) findViewById(R.id.lv_sastojci);
+        lvSastojci.setAdapter(dataAdapter);
+
+        lvSastojci.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                listener.onItemSelected(position);
+            }
+        });
+
+
+        Button btnBuy = (Button) findViewById(R.id.btn_buy);
+        btnBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(v.getContext(), "You've bought " + JeloProvider.getJeloById(position).getNaziv() + "!", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+
     }
 
     // onStart method is a lifecycle method called after onCreate (or after onRestart when the

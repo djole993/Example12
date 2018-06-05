@@ -10,6 +10,10 @@ public class Kategorija {
     Kategorija(){
 
     }
+    public Kategorija(int id, String naziv){
+        this.id = id;
+        this.naziv = naziv;
+    }
 
     public Kategorija(int id, String naziv, Jelo jelo) {
         this.id = id;
@@ -24,5 +28,9 @@ public class Kategorija {
                 ", naziv='" + naziv + '\'' +
                 ", jelo=" + jelo +
                 '}';
+    }
+    public int getId() {
+
+        return id;
     }
 }
