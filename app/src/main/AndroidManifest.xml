@@ -19,13 +19,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Declares 2nd activity -->
-        <activity
-            android:name=".activities.SecondActivity"
-            android:label="Activities"
-            android:icon="@mipmap/ic_launcher">
-        </activity>
-
     </application>
 
 </manifest>

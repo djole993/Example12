@@ -1,6 +1,8 @@
 package rs.aleph.android.example12.activities;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
+import android.app.ListFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,10 +16,18 @@ import android.widget.Toast;
 import java.util.List;
 
 import rs.aleph.android.example12.R;
+import rs.aleph.android.example12.activities.fragments.DetailFragment;
+import rs.aleph.android.example12.activities.fragments.MasterFragment;
 import rs.aleph.android.example12.activities.provider.JeloProvider;
 
 // Each activity extends Activity class
-public class FirstActivity extends Activity {
+public class FirstActivity extends Activity implements MasterFragment.OnItemSelectedListener{
+	private boolean landscape = false;
+
+	// Position of the item to be displayed in the detail fragment
+	private int position = 0;
+	private DetailFragment detailFragment = null;
+	private MasterFragment masterFragment = null;
 
 	static final int PICK_CONTACT_REQUEST = 0;  // The request code
 
@@ -30,33 +40,36 @@ public class FirstActivity extends Activity {
 		// Each lifecycle method should call the method it overrides
 		super.onCreate(savedInstanceState);
 
-		// setContentView method draws UI
-		setContentView(R.layout.activity_main);
-
-		// Load instance state from bundle
-
 
 		// Shows a toast message (a pop-up message)
 		Toast toast = Toast.makeText(getBaseContext(), "FirstActivity.onCreate()", Toast.LENGTH_SHORT);
 		toast.show();
 
-		final List<String> jeloNazivi = JeloProvider.getJeloNaziv();
+		setContentView(R.layout.activity_main);
 
-		// Creates an ArrayAdaptar from the array of String
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.list_item, jeloNazivi);
-		ListView listView = (ListView) findViewById(R.id.listOfJela);
+		// Load instance state from bundle
+		if (savedInstanceState != null) {
+			this.position = savedInstanceState.getInt("position");
+		}
 
-		// Assigns ArrayAdaptar to ListView
-		listView.setAdapter(dataAdapter);
+		// Create and show master fragment
+		masterFragment = new MasterFragment();
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.add(R.id.master_view, masterFragment, "Master_Fragment_1");
+		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+		ft.commit();
 
-		// Starts the SecondActivity and sends it the selected URL as an extra data
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
-				intent.putExtra("position", position);
-				startActivity(intent);
-			}
-		});
+		// Create detail fragment and show it if the device is in the landscape mode
+		detailFragment = new DetailFragment();
+		detailFragment.setContent(position);
+		if (findViewById(R.id.detail_view) != null) {
+			landscape = true;
+			getFragmentManager().popBackStack();
+			ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.detail_view, detailFragment, "Detail_Fragment_1");
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			ft.commit();
+		}
 	}
 
 	// onStart method is a lifecycle method called after onCreate (or after onRestart when the
@@ -140,22 +153,22 @@ public class FirstActivity extends Activity {
 		}
 
 	// Called when btnStart button is clicked
-	public void btnStartActivityClicked(View view) {
-		// This is an explicit intent (class property is specified)
-        Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
-		// startActivity method starts an activity
-        startActivity(intent);
-	}
+	//public void btnStartActivityClicked(View view) {
+	//	// This is an explicit intent (class property is specified)
+	//Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
+	//	// startActivity method starts an activity
+    //    startActivity(intent);
+	//}
 
 	// Called when btnSelectContact button is clicked
-    public void btnSelectContactClicked(View view) {
-		// This is an implicit intent
-        Intent intent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
-		// Show user only contacts w/ phone numbers
-		intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+    //public void btnSelectContactClicked(View view) {
+	//	// This is an implicit intent
+    //    Intent intent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
+	//	// Show user only contacts w/ phone numbers
+	//	intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
 		// startActivity method starts an activity
-		startActivityForResult(intent, PICK_CONTACT_REQUEST);
-    }
+	//	startActivityForResult(intent, PICK_CONTACT_REQUEST);
+    //}
 
     // Called when an activity you launched exits, giving you the requestCode you started it with, the resultCode it returned, and any additional data from it.
 	@Override
@@ -172,23 +185,43 @@ public class FirstActivity extends Activity {
             }
 		}
 	}
-	public void showCevape(View view) {
+	//public void showCevape(View view) {
 
-		Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
-		intent.putExtra("position", 0);
-		startActivity(intent);
+	//	Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
+	//	intent.putExtra("position", 0);
+	//	startActivity(intent);
+	//}
+	//public void showOmlet(View view){
+	//	Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
+	//	intent.putExtra("position",1);
+	//	startActivity(intent);
+	//}
+	//public void showPica(View view) {
+
+	//	Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
+	//	intent.putExtra("position", 2);
+	//	startActivity(intent);
+	//}
+
+
+	@Override
+	public void onItemSelected(int position) {
+		this.position = position;
+
+		// Shows a toast message (a pop-up message)
+		Toast.makeText(getBaseContext(), "FirstActivity.onItemSelected()", Toast.LENGTH_SHORT).show();
+
+		if (landscape) {
+			// If the device is in the landscape mode updates detail fragment's content.
+			detailFragment.updateContent(position);
+		} else {
+			// If the device is in the portrait mode sets detail fragment's content and replaces master fragment with detail fragment in a fragment transaction.
+			detailFragment.setContent(position);
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.master_view, detailFragment, "Detail_Fragment_1");
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			ft.addToBackStack(null);
+			ft.commit();
+		}
 	}
-	public void showOmlet(View view){
-		Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
-		intent.putExtra("position",1);
-		startActivity(intent);
-	}
-	public void showPica(View view) {
-
-		Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
-		intent.putExtra("position", 2);
-		startActivity(intent);
-	}
-
-
 }
